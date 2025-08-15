@@ -26,6 +26,7 @@
             --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
             --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
 
@@ -216,6 +217,9 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .cta-primary {
@@ -229,6 +233,12 @@
             color: var(--text-light);
             border: 1px solid var(--glass-border);
             backdrop-filter: blur(20px);
+        }
+
+        .cta-resume {
+            background: var(--gradient-4);
+            color: white;
+            border: none;
         }
 
         .cta-btn:hover {
@@ -540,6 +550,26 @@
             font-size: 14px;
         }
 
+        /* Resume Card Special Styling */
+        .contact-card.resume-card {
+            border: 2px solid transparent;
+            background: linear-gradient(var(--bg-dark), var(--bg-dark)) padding-box,
+                        var(--gradient-4) border-box;
+        }
+
+        .contact-card.resume-card .contact-icon {
+            color: #43e97b;
+        }
+
+        /* Download Animation */
+        .download-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .contact-card:hover .download-icon {
+            transform: translateY(4px);
+        }
+
         /* Animations */
         @keyframes fadeInUp {
             from {
@@ -590,6 +620,12 @@
             .cta-buttons {
                 flex-direction: column;
                 align-items: center;
+            }
+
+            .cta-btn {
+                width: 100%;
+                max-width: 280px;
+                justify-content: center;
             }
 
             .experience-header {
@@ -660,6 +696,10 @@
             <div class="cta-buttons">
                 <a href="#experience" class="cta-btn cta-primary">View My Work</a>
                 <a href="#contact" class="cta-btn cta-secondary">Get In Touch</a>
+                <a href="#" class="cta-btn cta-resume" onclick="downloadResume()">
+                    <i class="fas fa-download"></i>
+                    Download Resume
+                </a>
             </div>
         </div>
 
@@ -788,20 +828,77 @@
                     <div class="contact-title">GitHub</div>
                     <div class="contact-info">View my projects</div>
                 </a>
+                <a href="#" class="contact-card resume-card reveal" onclick="downloadResume()">
+                    <div class="contact-icon">
+                        <i class="fas fa-file-download download-icon"></i>
+                    </div>
+                    <div class="contact-title">Resume</div>
+                    <div class="contact-info">Download PDF</div>
+                </a>
             </div>
         </div>
     </section>
 
     <script>
+        // Resume download function
+        function downloadResume() {
+            // GitHub direct download link for your resume
+            const resumeUrl = 'https://raw.githubusercontent.com/Raghava800/demo/main/sai_resume.pdf';
+
+            // Download the file
+            const a = document.createElement('a');
+            a.href = resumeUrl;
+            a.download = 'sai_resume.pdf';
+            a.target = '_blank'; // Open in new tab as fallback
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            // Show download feedback
+            showDownloadFeedback();
+        }
+
+        // Show download feedback
+        function showDownloadFeedback() {
+            const button = event.target.closest('.cta-btn') || event.target.closest('.contact-card');
+            if (button) {
+                const originalText = button.innerHTML;
+                const isContactCard = button.classList.contains('contact-card');
+
+                if (isContactCard) {
+                    const icon = button.querySelector('.contact-icon i');
+                    const title = button.querySelector('.contact-title');
+                    const info = button.querySelector('.contact-info');
+
+                    icon.className = 'fas fa-check';
+                    title.textContent = 'Downloaded!';
+                    info.textContent = 'Resume saved';
+
+                    setTimeout(() => {
+                        icon.className = 'fas fa-file-download download-icon';
+                        title.textContent = 'Resume';
+                        info.textContent = 'Download PDF';
+                    }, 2000);
+                } else {
+                    button.innerHTML = '<i class="fas fa-check"></i>Downloaded!';
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                    }, 2000);
+                }
+            }
+        }
+
         // Smooth scrolling for navigation
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
             });
         });
 
